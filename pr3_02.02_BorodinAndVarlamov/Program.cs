@@ -45,5 +45,38 @@ namespace pr3_02._02_BorodinAndVarlamov
                 }
             }
         }
+
+        public static void Receiver()
+        {
+            UdpClient receivingUdpClient= new UdpClient();
+            IPEndPoint RemoteIpEndPoint= null;
+            try
+            {
+                while (true)
+                {
+                    byte[] receiveBytes=  receivingUdpClient.Receive(ref RemoteIpEndPoint);
+                    string returnData= Encoding.UTF8.GetString(receiveBytes);
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Получить команду " +returnData.ToString());
+
+                    if(returnData.ToString().Contains("/start"))
+                    {
+                        string[] dataMessage= returnData.ToString().Split('|');
+                        ViewModelUserSettings viewModelUserSettings=JsonConvert.DeserializeObject<ViewModelUserSettings>(dataMessage[1]);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Подключился пользователь: {viewModelUserSettings.IPAddress}:{viewModelUserSettings.Port}");
+                        remoteIPAddress.Add(viewModelUserSettings);
+                        viewModelUserSettings.IdShake = AddShake();
+                        viewModelGames[viewModelUserSettings.IdShake].IdShake=viewModelUserSettings.IdShake;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Возникло исключение: " + ex.ToString() + "\n " + ex.Message);
+            }
+        }
     }
 }

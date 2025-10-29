@@ -210,8 +210,21 @@ namespace pr3_02._02_BorodinAndVarlamov
                                     Leaders.FindIndex(x => x.Points == shakes.Points.Count - 3 && x.Name == User.Name) + 1;
                             }
                         }
+
+                        if(shakes.GameOver)
+                        {
+                            LoadLeaders();
+                            Leaders.Add(new Leaders()
+                            {
+                                Name = User.Name,
+                                Points = shakes.Points.Count - 3
+                            });
+                            SaveLeaders();
+                        }
                     }
                 }
+
+                Send();
             }
         }
 

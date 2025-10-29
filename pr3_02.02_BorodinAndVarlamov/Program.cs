@@ -96,5 +96,23 @@ namespace pr3_02._02_BorodinAndVarlamov
                 Console.WriteLine("Возникло исключение: " + ex.ToString() + "\n " + ex.Message);
             }
         }
+
+        public static int AddShake()
+        {
+            ViewModelGames viewModelGamesPlayer= new ViewModelGames();
+            viewModelGamesPlayer.ShakesPlayers = new Shakes()
+            {
+                Points = new List<Shakes.Point>()
+                {
+                    new Shakes.Point(){X=30,Y=10},
+                    new Shakes.Point(){X=20,Y=10},
+                    new Shakes.Point(){X=10,Y=10},
+                },
+                directory = Shakes.Direction.Start
+            };
+            viewModelGamesPlayer.Points = new Shakes.Point(new Random().Next(10, 783), new Random().Next(10, 410));
+            viewModelGames.Add(viewModelGamesPlayer);
+            return viewModelGames.FindIndex(x => x == viewModelGamesPlayer);
+        }
     }
 }

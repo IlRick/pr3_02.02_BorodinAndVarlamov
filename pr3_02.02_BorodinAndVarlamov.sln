@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pr3_02.02_BorodinAndVarlamov", "pr3_02.02_BorodinAndVarlamov\pr3_02.02_BorodinAndVarlamov.csproj", "{14296927-03DD-4F2A-93C5-46B01808BF8F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{6488A824-9643-4C78-A9F2-B645581FACE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeWPF", "SnakeWPF\SnakeWPF.csproj", "{D5123612-29C8-4988-8F80-002BA8300542}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{6488A824-9643-4C78-A9F2-B645581FACE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6488A824-9643-4C78-A9F2-B645581FACE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6488A824-9643-4C78-A9F2-B645581FACE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5123612-29C8-4988-8F80-002BA8300542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5123612-29C8-4988-8F80-002BA8300542}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5123612-29C8-4988-8F80-002BA8300542}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5123612-29C8-4988-8F80-002BA8300542}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

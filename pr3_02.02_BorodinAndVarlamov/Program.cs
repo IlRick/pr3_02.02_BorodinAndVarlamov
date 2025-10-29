@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection.Emit;
 using System.Text;
+using System.Threading;
 using Common;
 using Newtonsoft.Json;
 
@@ -114,5 +117,116 @@ namespace pr3_02._02_BorodinAndVarlamov
             viewModelGames.Add(viewModelGamesPlayer);
             return viewModelGames.FindIndex(x => x == viewModelGamesPlayer);
         }
+
+        public static void Timer()
+        {
+            while(true)
+            {
+                Thread.Sleep(100);
+                List<ViewModelGames> RemoteShake = viewModelGames.FindAll(x => x.ShakesPlayers.GameOver);
+                if(RemoteShake.Count > 0)
+                {
+                    foreach(ViewModelGames DeadShake in RemoteShake)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Отключил пользователя: {remoteIPAddress.Find(x => x.IdShake == DeadShake.IdShake).IPAddress}" +
+                            $":{remoteIPAddress.Find(x=>x.IdShake==DeadShake.IdShake).Port}");
+                        remoteIPAddress.RemoveAll(x=>x.IdShake==DeadShake.IdShake);
+                    }
+                    viewModelGames.RemoveAll(x=>x.ShakesPlayers.GameOver);
+                }
+                foreach (ViewModelUserSettings User in remoteIPAddress )
+                {
+                    Shakes shakes= viewModelGames.Find(x=>x.IdShake==User.IdShake).ShakesPlayers;
+                    for (int i = shakes.Points.Count - 1; i >= 0; i--)
+                    {
+                        if (i != 0)
+                        {
+                            shakes.Points[i] = shakes.Points[i - 1];
+                        }
+                        else
+                        {
+                            int speed = 10 + (int)Math.Round(shakes.Points.Count / 20f);
+                            if (speed > MaxSpeed) speed = MaxSpeed;
+
+                            if (shakes.directory == Shakes.Direction.Right)
+                            {
+                                shakes.Points[i] = new Shakes.Point() { X = shakes.Points[i].X + speed, Y = shakes.Points[i].Y };
+                            }
+                            else if (shakes.directory == Shakes.Direction.Down)
+                            {
+                                shakes.Points[i] = new Shakes.Point() { X = shakes.Points[i].X , Y = shakes.Points[i].Y + speed };
+                            }
+                            else if (shakes.directory == Shakes.Direction.Up)
+                            {
+                                shakes.Points[i] = new Shakes.Point() { X = shakes.Points[i].X, Y = shakes.Points[i].Y - speed };
+                            }
+                            else if (shakes.directory == Shakes.Direction.Left)
+                            {
+                                shakes.Points[i] = new Shakes.Point() { X = shakes.Points[i].X - speed, Y = shakes.Points[i].Y  };
+                            }
+                        }
+                        if (shakes.Points[0].X<=0||shakes.Points[0].X>=793) 
+                            shakes.GameOver = true;
+                        if (shakes.Points[0].Y<=0||shakes.Points[0].Y>=420) 
+                            shakes.GameOver = true;
+
+                        if(shakes.directory != Shakes.Direction.Start)
+                        {
+                            for(int IPoint=1;IPoint<shakes.Points.Count;IPoint++)
+                            {
+                                if (shakes.Points[0].X >= shakes.Points[IPoint].X-1 && shakes.Points[0].X >= shakes.Points[IPoint].X+1)
+                                {
+                                    if (shakes.Points[0].Y >= shakes.Points[IPoint].Y - 1 && shakes.Points[0].Y >= shakes.Points[IPoint].Y + 1)
+                                    {
+                                        shakes.GameOver = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (shakes.Points[0].X>=viewModelGames.Find(x=>x.IdShake==User.IdShake).Points.X-15 &&
+                            shakes.Points[0].X<=viewModelGames.Find(x=>x.IdShake==User.IdShake).Points.X+15)
+                        {
+                            if (shakes.Points[0].Y >= viewModelGames.Find(x => x.IdShake == User.IdShake).Points.Y - 15 &&
+                            shakes.Points[0].Y <= viewModelGames.Find(x => x.IdShake == User.IdShake).Points.Y + 15)
+                            {
+                                viewModelGames.Find(x=>x.IdShake==User.IdShake).Points= new Shakes.Point(
+                                    new Random().Next(10,783),
+                                    new Random().Next(10,410));
+                                shakes.Points.Add(new Shakes.Point()
+                                {
+                                    X = shakes.Points[shakes.Points.Count-1].X,
+                                    Y = shakes.Points[shakes.Points.Count-1].Y
+                                });
+                                LoadLeaders();
+                                Leaders.Add(new Leaders()
+                                {
+                                    Name=User.Name,
+                                    Points=shakes.Points.Count-3
+                                });
+                                Leaders=Leaders.OrderByDescending(x=>x.Points).ThenBy(x=>x.Name).ToList();
+                                viewModelGames.Find(x => x.IdShake == User.IdShake).Top =
+                                    Leaders.FindIndex(x => x.Points == shakes.Points.Count - 3 && x.Name == User.Name) + 1;
+                            }
+                        }
+
+                        if(shakes.GameOver)
+                        {
+                            LoadLeaders();
+                            Leaders.Add(new Leaders()
+                            {
+                                Name = User.Name,
+                                Points = shakes.Points.Count - 3
+                            });
+                            SaveLeaders();
+                        }
+                    }
+                }
+
+                Send();
+            }
+        }
+
     }
 }

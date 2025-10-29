@@ -60,15 +60,33 @@ namespace pr3_02._02_BorodinAndVarlamov
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Получить команду " +returnData.ToString());
 
-                    if(returnData.ToString().Contains("/start"))
+                    if (returnData.ToString().Contains("/start"))
                     {
-                        string[] dataMessage= returnData.ToString().Split('|');
-                        ViewModelUserSettings viewModelUserSettings=JsonConvert.DeserializeObject<ViewModelUserSettings>(dataMessage[1]);
+                        string[] dataMessage = returnData.ToString().Split('|');
+                        ViewModelUserSettings viewModelUserSettings = JsonConvert.DeserializeObject<ViewModelUserSettings>(dataMessage[1]);
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"Подключился пользователь: {viewModelUserSettings.IPAddress}:{viewModelUserSettings.Port}");
                         remoteIPAddress.Add(viewModelUserSettings);
                         viewModelUserSettings.IdShake = AddShake();
-                        viewModelGames[viewModelUserSettings.IdShake].IdShake=viewModelUserSettings.IdShake;
+                        viewModelGames[viewModelUserSettings.IdShake].IdShake = viewModelUserSettings.IdShake;
+                    }
+                    else
+                    {
+                        string[] dataMessage = returnData.ToString().Split('|');
+                        ViewModelUserSettings viewModelUserSettings = JsonConvert.DeserializeObject<ViewModelUserSettings>(dataMessage[1]);
+                        int IdPlayer = -1;
+                        IdPlayer = remoteIPAddress.FindIndex(x => x.IPAddress == viewModelUserSettings.IPAddress && x.Port == viewModelUserSettings.Port);
+                        if (IdPlayer != -1)
+                        {
+                            if (dataMessage[0] == "Up" && viewModelGames[IdPlayer].ShakesPlayers.directory != Shakes.Direction.Down)
+                                viewModelGames[IdPlayer].ShakesPlayers.directory = Shakes.Direction.Up;
+                            else if (dataMessage[0] == "Down" && viewModelGames[IdPlayer].ShakesPlayers.directory != Shakes.Direction.Up)
+                                viewModelGames[IdPlayer].ShakesPlayers.directory = Shakes.Direction.Down;
+                            else if (dataMessage[0] == "Left" && viewModelGames[IdPlayer].ShakesPlayers.directory != Shakes.Direction.Right)
+                                viewModelGames[IdPlayer].ShakesPlayers.directory = Shakes.Direction.Left;
+                            else if (dataMessage[0] == "Right" && viewModelGames[IdPlayer].ShakesPlayers.directory != Shakes.Direction.Left)
+                                viewModelGames[IdPlayer].ShakesPlayers.directory = Shakes.Direction.Right;
+                        }
                     }
                 }
             }

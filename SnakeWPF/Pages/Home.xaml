@@ -10,12 +10,12 @@
 
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="/SnakeWPF;component/Image/autism.jpg" Opacity="0.52" />
+            <ImageBrush ImageSource="/Image/foto2.jpeg" Opacity="0.52" />
         </Grid.Background>
         <Grid>
             <Grid Width="320" Height="200" HorizontalAlignment="Center"  VerticalAlignment="Center">
                 <Grid.Background>
-                    <ImageBrush ImageSource="/SnakeWPF;component/Image/susio.jpg" Opacity="0.8" />
+                    <ImageBrush ImageSource="/Image/foto3.jpg" Opacity="0.8" />
                 </Grid.Background>
 
                 <Label 

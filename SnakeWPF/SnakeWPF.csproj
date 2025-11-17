@@ -121,12 +121,22 @@
       <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Resource Include="Image\autism.jpg" />
-    <Resource Include="Image\beb.jpg" />
-    <Resource Include="Image\sabaka.jpg" />
-    <Resource Include="Image\susio.jpg" />
+    <Resource Include="Image\foto1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\foto2.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\foto3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\foto4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\foto5.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

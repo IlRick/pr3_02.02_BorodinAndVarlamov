@@ -10,7 +10,7 @@
 
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="/SnakeWPF;component/Image/beb.jpg" Opacity="0.52"/>
+            <ImageBrush ImageSource="/SnakeWPF;component/Image/foto1.png" Opacity="0.52"/>
         </Grid.Background>
         <Canvas x:Name="canvas">
         </Canvas>

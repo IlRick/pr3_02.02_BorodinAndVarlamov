@@ -21,6 +21,20 @@ namespace pr3_02._02_BorodinAndVarlamov
         public static int MaxSpeed = 15;
         static void Main(string[] args)
         {
+            try
+            {
+                Thread tRec = new Thread(new ThreadStart(Receiver));
+                tRec.Start();
+
+                Thread tTime = new Thread(new ThreadStart(Timer));
+                tTime.Start();
+
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Возникло исключение: " + ex.ToString() + "\n " + ex.Message);
+            }
         }
 
         private static void Send()
@@ -52,10 +66,12 @@ namespace pr3_02._02_BorodinAndVarlamov
 
         public static void Receiver()
         {
-            UdpClient receivingUdpClient= new UdpClient();
+            UdpClient receivingUdpClient= new UdpClient(LocalPort);
             IPEndPoint RemoteIpEndPoint= null;
             try
             {
+                Console.ForegroundColor= ConsoleColor.Green;
+                Console.WriteLine("Команды сервера: ");
                 while (true)
                 {
                     byte[] receiveBytes=  receivingUdpClient.Receive(ref RemoteIpEndPoint);
@@ -229,6 +245,22 @@ namespace pr3_02._02_BorodinAndVarlamov
             }
         }
 
+        private static void LoadLeaders()
+        {
+            if (File.Exists("./leaders.txt"))
+            {
+                StreamReader SR = new StreamReader("./leaders.txt");
+                string json= SR.ReadLine();
+                SR.Close();
+                if(!string.IsNullOrEmpty(json)) 
+                    Leaders=JsonConvert.DeserializeObject<List<Leaders>>(json);
+                else
+                    Leaders= new List<Leaders>();
+            }
+            else
+                Leaders= new List<Leaders>();
+        }
+
         public static void SaveLeaders()
         {
             string json= JsonConvert.SerializeObject(Leaders);
@@ -236,6 +268,8 @@ namespace pr3_02._02_BorodinAndVarlamov
             SW.WriteLine(json);
             SW.Close();
         }
+
+        
 
     }
 }

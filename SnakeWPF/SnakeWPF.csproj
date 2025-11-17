@@ -120,6 +120,10 @@
       <Project>{6488a824-9643-4c78-a9f2-b645581face4}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\pr3_02.02_BorodinAndVarlamov\pr3_02.02_BorodinAndVarlamov.csproj">
+      <Project>{14296927-03dd-4f2a-93c5-46b01808bf8f}</Project>
+      <Name>pr3_02.02_BorodinAndVarlamov</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Image\foto1.png">

@@ -23,6 +23,16 @@ namespace SnakeWPF.Pages
         public EndGame()
         {
             InitializeComponent();
+            name.Content= MainWindow.mainWindow.ViewModelUserSettings.Name;
+            top.Content= MainWindow.mainWindow.ViewModelGames.Top;
+            glasses.Content=$"{MainWindow.mainWindow.ViewModelGames.ShakesPlayers.Points.Count-3} glasses";
+            MainWindow.mainWindow.tRec.Abort();
+            MainWindow.mainWindow.ViewModelGames=null;
+        }
+
+        private void OpenHome(object sender, RoutedEventArgs e)
+        {
+            MainWindow.mainWindow.OpenPage(MainWindow.mainWindow.Home);
         }
     }
 }

@@ -92,7 +92,7 @@ namespace SnakeWPF.Pages
                     canvas.Children.Add(ellipse);
                 }
                 ImageBrush myBrash = new ImageBrush();
-                myBrash.ImageSource = new BitmapImage(new Uri($"../Image/apple.png"));
+                myBrash.ImageSource = new BitmapImage(new Uri($"C:\\Users\\student-a502.PERMAVIAT\\Desktop\\rgh\\pr3_02.02_BorodinAndVarlamov\\SnakeWPF\\Image\\apple.png"));
                 Ellipse point = new Ellipse()
                 {
                     Width= 40,

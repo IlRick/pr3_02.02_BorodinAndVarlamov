@@ -95,7 +95,7 @@ namespace SnakeWPF
                     }
                     else
                     {
-                       // Game.CreateUI();
+                       Game.CreateUI();
                     }
                 }
             }

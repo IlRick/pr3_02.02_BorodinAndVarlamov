@@ -22,6 +22,8 @@ namespace SnakeWPF.Pages
     /// </summary>
     public partial class Game : Page
     {
+        private List<Point> smoothPlayerPoints = new List<Point>();
+        private List<List<Point>> smoothOtherPoints = new List<List<Point>>();
         public int StepCadr = 0;
         public Game()
         {
@@ -32,135 +34,67 @@ namespace SnakeWPF.Pages
         {
             Dispatcher.Invoke(() =>
             {
-                if (StepCadr == 0) StepCadr = 1;
-                else StepCadr = 0;
                 canvas.Children.Clear();
-                for(int iPoint= MainWindow.mainWindow.ViewModelGames.ShakesPlayers.Points.Count-1;iPoint>=0;iPoint--)
-                {
-                    Shakes.Point ShakesPoint = MainWindow.mainWindow.ViewModelGames.ShakesPlayers.Points[iPoint];
-                    if(iPoint!=0)
-                    {
-                        Shakes.Point NextShakePoint = MainWindow.mainWindow.ViewModelGames.ShakesPlayers.Points[iPoint - 1];
-                        if(ShakesPoint.X>NextShakePoint.X||ShakesPoint.X<NextShakePoint.X)
-                        {
-                            if(iPoint%2==0)
-                            {
-                                if (StepCadr % 2 == 0)
-                                    ShakesPoint.Y -= 1;
-                                else
-                                    ShakesPoint.Y += 1;
-                            }
-                            else
-                            {
-                                if (StepCadr % 2 == 0)
-                                    ShakesPoint.Y += 1;
-                                else
-                                    ShakesPoint.Y -= 1;
-                            }
-                        }
-                        else if(ShakesPoint.Y>NextShakePoint.Y||ShakesPoint.Y<NextShakePoint.Y)
-                        {
-                            if (iPoint % 2 == 0)
-                            {
-                                if (StepCadr % 2 == 0)
-                                    ShakesPoint.X -= 1;
-                                else
-                                    ShakesPoint.X += 1;
-                            }
-                            else
-                            {
-                                if (StepCadr % 2 == 0)
-                                    ShakesPoint.X += 1;
-                                else
-                                    ShakesPoint.X -= 1;
-                            }
-                        }
-                    }
-                    Brush Color;
+                var playerSnake = MainWindow.mainWindow.ViewModelGames.ShakesPlayers.Points;
+                while (smoothPlayerPoints.Count < playerSnake.Count)
+                    smoothPlayerPoints.Add(new Point(playerSnake[smoothPlayerPoints.Count].X,
+                                                     playerSnake[smoothPlayerPoints.Count].Y));
 
-                    if (iPoint == 0)
-                    {
-                        Color = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 127, 14));
-                    }
-                    else
-                    {
-                        Color = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 198, 19));
-                    }
+                for (int i = 0; i < playerSnake.Count; i++)
+                {
+                    var target = playerSnake[i];
+                    var smooth = smoothPlayerPoints[i];
+
+                    smooth.X += (target.X - smooth.X) * 0.37;
+                    smooth.Y += (target.Y - smooth.Y) * 0.37;
+
+                    smoothPlayerPoints[i] = smooth;
 
                     Ellipse ellipse = new Ellipse()
                     {
                         Width = 20,
                         Height = 20,
-                        Margin = new Thickness(ShakesPoint.X - 10, ShakesPoint.Y - 10, 0, 0),
-                        Fill = Color,
+                        Fill = i == 0
+                            ? new SolidColorBrush(Color.FromArgb(255, 0, 127, 14))
+                            : new SolidColorBrush(Color.FromArgb(255, 0, 198, 19)),
+                        Margin = new Thickness(smooth.X - 10, smooth.Y - 10, 0, 0),
                         Stroke = Brushes.Black
                     };
                     canvas.Children.Add(ellipse);
                 }
-
-                if (MainWindow.mainWindow.AllViewModelGames != null)
+                var others = MainWindow.mainWindow.AllViewModelGames;
+                if (others != null)
                 {
-                    for (int i = 0; i < MainWindow.mainWindow.AllViewModelGames.Count; i++)
+                    while (smoothOtherPoints.Count < others.Count)
+                        smoothOtherPoints.Add(new List<Point>());
+
+                    for (int p = 0; p < others.Count; p++)
                     {
-                        for (int iPoint = MainWindow.mainWindow.AllViewModelGames[i].ShakesPlayers.Points.Count - 1; iPoint >= 0; iPoint--)
+                        var snake = others[p].ShakesPlayers.Points;
+                        var smoothList = smoothOtherPoints[p];
+
+                        while (smoothList.Count < snake.Count)
+                            smoothList.Add(new Point(snake[smoothList.Count].X,
+                                                     snake[smoothList.Count].Y));
+
+                        for (int i = 0; i < snake.Count; i++)
                         {
-                            Shakes.Point SnakePoint = MainWindow.mainWindow.AllViewModelGames[i].ShakesPlayers.Points[iPoint];
+                            var target = snake[i];
+                            var smooth = smoothList[i];
 
-                            if (iPoint != 0)
-                            {
-                                Shakes.Point NextSnakePoint = MainWindow.mainWindow.AllViewModelGames[i].ShakesPlayers.Points[iPoint - 1];
-                                if (SnakePoint.X > NextSnakePoint.X || SnakePoint.X < NextSnakePoint.X)
-                                {
-                                    if (iPoint % 2 == 0)
-                                    {
-                                        if (StepCadr % 2 == 0)
-                                            SnakePoint.Y -= 1;
-                                        else
-                                            SnakePoint.Y += 1;
-                                    }
-                                    else
-                                    {
-                                        if (StepCadr % 2 == 0)
-                                            SnakePoint.Y += 1;
-                                        else
-                                            SnakePoint.Y -= 1;
-                                    }
-                                }
-                                else if (SnakePoint.Y > NextSnakePoint.Y || SnakePoint.Y < NextSnakePoint.Y)
-                                {
-                                    if (iPoint % 2 == 0)
-                                    {
-                                        if (StepCadr % 2 == 0)
-                                            SnakePoint.X -= 1;
-                                        else
-                                            SnakePoint.X += 1;
-                                    }
-                                    else
-                                    {
-                                        if (StepCadr % 2 == 0)
-                                            SnakePoint.X += 1;
-                                        else
-                                            SnakePoint.X -= 1;
-                                    }
-                                }
-                            }
-                            Brush Color;
+                            smooth.X += (target.X - smooth.X) * 0.37;
+                            smooth.Y += (target.Y - smooth.Y) * 0.37;
 
-                            if (iPoint == 0)
-                            {
-                                Color = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 135, 135, 135));
-                            }
-                            else
-                            {
-                                Color = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 160, 160, 160));
-                            }
+                            smoothList[i] = smooth;
 
                             Ellipse ellipse = new Ellipse()
                             {
                                 Width = 20,
                                 Height = 20,
-                                Margin = new Thickness(SnakePoint.X - 10, SnakePoint.Y - 10, 0, 0),
-                                Fill = Color,
+                                Margin = new Thickness(smooth.X - 10, smooth.Y - 10, 0, 0),
+                                Fill = i == 0
+                                    ? new SolidColorBrush(Color.FromArgb(255, 135, 135, 135))
+                                    : new SolidColorBrush(Color.FromArgb(255, 160, 160, 160)),
                                 Stroke = Brushes.Black
                             };
                             canvas.Children.Add(ellipse);

@@ -30,6 +30,7 @@ namespace SnakeWPF
         public static MainWindow mainWindow;
         public ViewModelUserSettings ViewModelUserSettings = new ViewModelUserSettings();
         public ViewModelGames ViewModelGames = null;
+        public List<ViewModelGames> AllViewModelGames = null;
         public static IPAddress remoteIPAddress= IPAddress.Parse("127.0.0.1");
         public static int remotePort = 5001;
         public Thread tRec;
@@ -43,13 +44,11 @@ namespace SnakeWPF
             mainWindow = this;
             OpenPage(Home);
         }
-
         public void StartReceiver()
         {
             tRec = new Thread(new ThreadStart(Receiver));
             tRec.Start();
         }
-
         public void OpenPage(Page PageOpen)
         {
             DoubleAnimation startAnimation= new DoubleAnimation();
@@ -85,7 +84,11 @@ namespace SnakeWPF
                             OpenPage(Game);
                         });
                     }
-                    ViewModelGames= JsonConvert.DeserializeObject<ViewModelGames>(returnData.ToString());
+
+                    var gameData = JsonConvert.DeserializeObject<GameData>(returnData);
+                    ViewModelGames=gameData.PlayerData;
+                    AllViewModelGames = gameData.OtherPlayersData;
+
                     if(ViewModelGames.ShakesPlayers.GameOver)
                     {
                         Dispatcher.Invoke(() =>
@@ -95,39 +98,37 @@ namespace SnakeWPF
                     }
                     else
                     {
-                       Game.CreateUI();
+                        Game.CreateUI();
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.ToString() + ex.Message);
+                Debug.WriteLine("Возникло исключенеие: " + ex.ToString() + "\n " + ex.Message);
             }
         }
-
         public static void Send(string datagram)
         {
-            UdpClient sender= new UdpClient();
-            IPEndPoint endPoint= new IPEndPoint(remoteIPAddress, remotePort);
+            UdpClient sender = new UdpClient();
+            IPEndPoint endPoint = new IPEndPoint(remoteIPAddress, remotePort);
             try
             {
-                byte[] butes= Encoding.UTF8.GetBytes(datagram);
-                sender.Send(butes, butes.Length, endPoint);
+                byte[] bytes= Encoding.UTF8.GetBytes(datagram);
+                sender.Send(bytes, bytes.Length, endPoint);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.ToString() + ex.Message);
+                Debug.WriteLine("Возникло исключенеие: " + ex.ToString() + "\n " + ex.Message);
             }
             finally
             {
                 sender.Close();
             }
-
         }
 
         private void EventKeyUp(object sender,KeyEventArgs e)
         {
-            if (!string.IsNullOrEmpty(ViewModelUserSettings.IPAddress) && 
+            if (!string.IsNullOrEmpty(ViewModelUserSettings.IPAddress) &&
                 !string.IsNullOrEmpty(ViewModelUserSettings.Port) &&(ViewModelGames != null && !ViewModelGames.ShakesPlayers.GameOver))
             {
                 if(e.Key == Key.Up)

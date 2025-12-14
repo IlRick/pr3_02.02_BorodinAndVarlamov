@@ -47,10 +47,18 @@ namespace pr3_02._02_BorodinAndVarlamov
                     int.Parse(User.Port));
                 try
                 {
-                    byte[] bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(viewModelGames.Find(x => x.IdShake == User.IdShake)));
-                    sender.Send(bytes, bytes.Length, endPoint);
+                    var playerData = viewModelGames.Find(x => x.IdShake == User.IdShake);
+                    var otherPlayersData = viewModelGames.FindAll(x => x.IdShake != User.IdShake);
+                    var gameData = new GameData
+                    {
+                        PlayerData = playerData,
+                        OtherPlayersData = otherPlayersData
+                    };
+
+                    byte[] gameDataBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(gameData));
+                    sender.Send(gameDataBytes, gameDataBytes.Length, endPoint);
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"Отправил данные пользователя:  {User.IPAddress}:{User.Port}");
+                    Console.WriteLine($"Отправил данные игроку {User.IPAddress}:{User.Port}");
                 }
                 catch (Exception ex)
                 {
@@ -76,10 +84,8 @@ namespace pr3_02._02_BorodinAndVarlamov
                 {
                     byte[] receiveBytes = receivingUdpClient.Receive(ref RemoteIpEndPoint);
                     string returnData = Encoding.UTF8.GetString(receiveBytes);
-
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Получить команду " + returnData.ToString());
-
                     if (returnData.ToString().Contains("/start"))
                     {
                         string[] dataMessage = returnData.ToString().Split('|');
@@ -240,7 +246,6 @@ namespace pr3_02._02_BorodinAndVarlamov
                         }
                     }
                 }
-
                 Send();
             }
         }
